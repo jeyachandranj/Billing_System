@@ -146,7 +146,7 @@ app.post("/api/orders", async (req, res) => {
     // 6. Create history record
     await History.create({ 
       type: "Order", 
-      detail: `Created order ${orderId}` 
+      detail: `Created order ${orderId} for ${order.customerName}` 
     });
 
     res.status(201).json({
@@ -212,7 +212,7 @@ app.put('/api/orders/:orderId', async (req, res) => {
 // GET COMPLETED ORDERS
 app.get("/api/orders", async (req, res) => {
   const status = req.query.status;
-  const orders = await Order.find(status ? { status } : {});
+  const orders = await Order.find();
   res.json(orders);
 });
 

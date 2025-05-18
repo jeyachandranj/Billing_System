@@ -155,7 +155,7 @@ const AddOrder = () => {
         </div>
 
         <div className="total-amount">
-          <strong>Total Amount: ${totalAmount}</strong>
+          <strong>Total Amount: ₹{totalAmount}</strong>
         </div>
 
         <button type="button" onClick={handleSubmitOrder}>
