@@ -55,16 +55,25 @@ const ManageGoods = () => {
   };
 
   const handleSave = async (id) => {
-    try {
-      const product = products.find((item) => item._id === id);
-      await axios.put(`http://localhost:3000/api/goods/${id}`, product);
-      alert('Product updated');
-      // Update the original product to match the new state
-      setOriginalProduct({...product});
-    } catch (err) {
-      console.error('Error updating product:', err);
+  try {
+    const product = products.find((item) => item._id === id);
+    const price = parseFloat(product.price);
+    const quantity = parseInt(product.quantity);
+
+    if (price < 0 || quantity < 0) {
+      alert('Price and Quantity must be zero or positive values.');
+      return;
     }
-  };
+
+    await axios.put(`http://localhost:3000/api/goods/${id}`, product);
+    alert('Product updated');
+    // Update the original product to match the new state
+    setOriginalProduct({ ...product });
+  } catch (err) {
+    console.error('Error updating product:', err);
+  }
+};
+
 
   return (
     <div className="manage-container">

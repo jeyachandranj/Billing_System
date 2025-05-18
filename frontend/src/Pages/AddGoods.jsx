@@ -1,10 +1,24 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './AddGoods.css';
 import axios from 'axios';
 
-
-
 const AddGoods = () => {
+  const materials = ['cotton', 'polyester', 'silk', 'linen'];
+  const thicknesses = ['thin', 'medium', 'thick'];
+  const tensileStrengths = ['low', 'medium', 'high'];
+  const finishTypes = ['matte', 'glossy', 'satin'];
+  const threadCategories = [
+    'Sewing ',
+    'Embroidery ',
+    'Quilting ',
+    'Upholstery ',
+    'Serger ',
+    'Industrial ',
+    'Decorative ',
+    'Metallic ',
+    'Elastic '
+  ];
+
   const [product, setProduct] = useState({
     name: '',
     category: '',
@@ -21,32 +35,36 @@ const AddGoods = () => {
       tensileStrength: '',
       finish: ''
     },
-    images:[]
+    images: []
   });
 
   const [newColor, setNewColor] = useState({ name: '', hexCode: '#cccccc' });
   const [newSize, setNewSize] = useState('');
   const [newFeature, setNewFeature] = useState('');
-  const [newImages, setImages] = useState([]);
+  const [newImages, setImages] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const formRef = useRef(null);
-  
-  const threadCategories = [
-    'Sewing Thread',
-    'Embroidery Thread',
-    'Quilting Thread',
-    'Upholstery Thread',
-    'Serger Thread',
-    'Industrial Thread',
-    'Decorative Thread',
-    'Metallic Thread',
-    'Elastic Thread'
-  ];
+
+  // Auto update product name when category or material changes
+  useEffect(() => {
+    if (product.category && product.specifications.material) {
+      const formattedCategory = product.category.replace(/-/g, ' ');
+      setProduct(prev => ({
+        ...prev,
+        name: `${formattedCategory} ${prev.specifications.material} thread`
+      }));
+    } else {
+      setProduct(prev => ({
+        ...prev,
+        name: ''
+      }));
+    }
+  }, [product.category, product.specifications.material]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name.includes('.')) {
       // Handle nested properties (specifications)
       const [parent, child] = name.split('.');
@@ -122,7 +140,7 @@ const AddGoods = () => {
         ...prev,
         images: [...prev.images, newImages]
       }));
-      setNewFeature('');
+      setImages('');
     }
   };
 
@@ -133,24 +151,15 @@ const AddGoods = () => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      axios.post('http://localhost:3000/api/goods', product)
-      .then(response => {
-        console.log('Success:', response.data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-      
+      await axios.post('http://localhost:3000/api/goods', product);
+
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log('Product submitted:', product);
-      
+
       // Reset form after successful submission
       setProduct({
         name: '',
@@ -167,27 +176,24 @@ const AddGoods = () => {
           thickness: '',
           tensileStrength: '',
           finish: ''
-        }
+        },
+        images: []
       });
       setImages([]);
-      
-   
+
       // Show success message
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      
+
       // Reset form fields not managed by React state
       formRef.current.reset();
 
-      
     } catch (error) {
       console.error('Error adding product:', error);
       alert('Failed to add product. Please try again.');
     } finally {
       setLoading(false);
     }
-
-    
   };
 
   return (
@@ -196,24 +202,29 @@ const AddGoods = () => {
         <h2>Add New Thread Details</h2>
         <p>Enter the details below to add a new thread product to your inventory</p>
       </div>
-      
+
       <form ref={formRef} onSubmit={handleSubmit} className="thread-product-form">
         <div className="form-section">
           <h3>Basic Information</h3>
-          
+
+          {/* Material Dropdown inside Specifications, but placed above Category */}
           <div className="form-group">
-            <label htmlFor="name">Product Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={product.name}
+            <label htmlFor="specifications.material">Material</label>
+            <select
+              id="specifications.material"
+              name="specifications.material"
+              value={product.specifications.material}
               onChange={handleChange}
-              placeholder="e.g. Premium Cotton Sewing Thread"
               required
-            />
+            >
+              <option value="">Select Material</option>
+              {materials.map((mat, idx) => (
+                <option key={idx} value={mat}>{mat.charAt(0).toUpperCase() + mat.slice(1)}</option>
+              ))}
+            </select>
           </div>
-          
+
+          {/* Category dropdown */}
           <div className="form-group">
             <label htmlFor="category">Category</label>
             <select
@@ -225,14 +236,29 @@ const AddGoods = () => {
             >
               <option value="">Select Thread Category</option>
               {threadCategories.map((category, index) => (
-                <option key={index} value={category.toLowerCase().replace(' ', '-')}>
+                <option key={index} value={category.toLowerCase().replace(/ /g, '-')}>
                   {category}
                 </option>
               ))}
               <option value="other">Other</option>
             </select>
           </div>
-          
+
+          {/* Product Name - Auto-filled */}
+          <div className="form-group">
+            <label htmlFor="name">Product Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={product.name}
+              onChange={handleChange}
+              placeholder="Auto-filled based on category and material"
+              readOnly
+              required
+            />
+          </div>
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="price">Price (₹)</label>
@@ -248,7 +274,7 @@ const AddGoods = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="quantity">Quantity</label>
               <input
@@ -264,207 +290,193 @@ const AddGoods = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="form-section">
           <h3>Thread Specifications</h3>
-          
+
           <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="specifications.material">Material</label>
-              <input
-                type="text"
-                id="specifications.material"
-                name="specifications.material"
-                value={product.specifications.material}
-                onChange={handleChange}
-                placeholder="e.g. Cotton, Polyester, Silk"
-              />
-            </div>
-            
+            {/* Length */}
             <div className="form-group">
               <label htmlFor="specifications.length">Length</label>
-              <input
-                type="text"
-                id="specifications.length"
-                name="specifications.length"
-                value={product.specifications.length}
-                onChange={handleChange}
-                placeholder="e.g. 500 yards"
-              />
-            </div>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="specifications.thickness">Thickness</label>
-              <input
-                type="text"
-                id="specifications.thickness"
-                name="specifications.thickness"
-                value={product.specifications.thickness}
-                onChange={handleChange}
-                placeholder="e.g. Ne 40s"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="specifications.tensileStrength">Tensile Strength</label>
-              <input
-                type="text"
-                id="specifications.tensileStrength"
-                name="specifications.tensileStrength"
-                value={product.specifications.tensileStrength}
-                onChange={handleChange}
-                placeholder="e.g. Medium, High"
-              />
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="specifications.finish">Finish Type</label>
-            <input
-              type="text"
-              id="specifications.finish"
-              name="specifications.finish"
-              value={product.specifications.finish}
-              onChange={handleChange}
-              placeholder="e.g. Glazed, Mercerized, Matte"
-            />
-          </div>
-        </div>
-        
-        <div className="form-section">
-          <h3>Colors</h3>
-          <div className="color-input-container">
-            <div className="color-input-group">
-              <input
-                type="text"
-                value={newColor.name}
-                onChange={(e) => setNewColor({...newColor, name: e.target.value})}
-                placeholder="Color Name (e.g. Sky Blue)"
-              />
-              <input
-                type="color"
-                value={newColor.hexCode}
-                onChange={(e) => setNewColor({...newColor, hexCode: e.target.value})}
-              />
-            </div>
-            <button type="button" className="btn-add" onClick={handleColorAdd}>Add Color</button>
-          </div>
-          
-          <div className="color-chips">
-            {product.colors.map((color, index) => (
-              <div 
-                key={index} 
-                className="color-chip"
-                style={{ backgroundColor: color.hexCode }}
-              >
-                <span>{color.name}</span>
-                <button type="button" onClick={() => handleColorRemove(index)}>×</button>
+                <input type="text" id="specifications.length" name="specifications.length" value={product.specifications.length} onChange={handleChange} placeholder="e.g., 100m, 200yd" required />
               </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="form-section">
-          <h3>Available Sizes</h3>
-          <div className="tag-input-container">
-            <input
-              type="text"
-              value={newSize}
-              onChange={(e) => setNewSize(e.target.value)}
-              placeholder="Enter size (e.g. S, M, L or numeric)"
-            />
-            <button type="button" className="btn-add" onClick={handleSizeAdd}>Add Size</button>
-          </div>
-          
-          <div className="tags">
-            {product.sizes.map((size, index) => (
-              <div key={index} className="tag">
-                <span>{size}</span>
-                <button type="button" onClick={() => handleSizeRemove(index)}>×</button>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="form-section">
-          <h3>Product Features</h3>
-          <div className="tag-input-container">
-            <input
-              type="text"
-              value={newFeature}
-              onChange={(e) => setNewFeature(e.target.value)}
-              placeholder="Enter product feature"
-            />
-            <button type="button" className="btn-add" onClick={handleFeatureAdd}>Add Feature</button>
-          </div>
-          
-          <div className="tags feature-tags">
-            {product.features.map((feature, index) => (
-              <div key={index} className="tag feature-tag">
-                <span>{feature}</span>
-                <button type="button" onClick={() => handleFeatureRemove(index)}>×</button>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="form-section">
-          <h3>Description</h3>
-          <div className="form-group">
-            <textarea
-              id="description"
-              name="description"
-              rows="6"
-              value={product.description}
-              onChange={handleChange}
-              placeholder="Provide a detailed description of your thread product..."
-              required
-            ></textarea>
-          </div>
-        </div>
-        
 
-        <div className="form-section">
-          <h3>Images</h3>
-          <div className="tag-input-container">
-            <input
-              type="text"
-              value={newImages}
-              onChange={(e) => setImages(e.target.value)}
-              placeholder="Enter image urls"
-            />
-            <button type="button" className="btn-add" onClick={handleImageAdd}>Add Image</button>
-          </div>
-          
-          <div className="tags feature-tags">
-            { product.images.map((image, index) => (
-              <div key={index} className="tag feature-tag">
-                <span>{image}</span>
-                <button type="button" onClick={() => handleImageRemove(index)}>×</button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-
-
-
-        <div className="form-actions">
-          <button type="button" className="btn-cancel">Cancel</button>
-          <button 
-            type="submit" 
-            className={`btn-submit ${loading ? 'loading' : ''} ${success ? 'success' : ''}`}
-            disabled={loading}
+                    {/* Thickness Dropdown */}
+        <div className="form-group">
+          <label htmlFor="specifications.thickness">Thickness</label>
+          <select
+            id="specifications.thickness"
+            name="specifications.thickness"
+            value={product.specifications.thickness}
+            onChange={handleChange}
+            required
           >
-            {loading ? 'Adding Product...' : success ? 'Product Added!' : 'Add Thread Product'}
-          </button>
+            <option value="">Select Thickness</option>
+            {thicknesses.map((thick, idx) => (
+              <option key={idx} value={thick}>
+                {thick.charAt(0).toUpperCase() + thick.slice(1)}
+              </option>
+            ))}
+          </select>
         </div>
-      </form>
+      </div>
+
+      <div className="form-row">
+        {/* Tensile Strength Dropdown */}
+        <div className="form-group">
+          <label htmlFor="specifications.tensileStrength">Tensile Strength</label>
+          <select
+            id="specifications.tensileStrength"
+            name="specifications.tensileStrength"
+            value={product.specifications.tensileStrength}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Tensile Strength</option>
+            {tensileStrengths.map((ts, idx) => (
+              <option key={idx} value={ts}>
+                {ts.charAt(0).toUpperCase() + ts.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Finish Type Dropdown */}
+        <div className="form-group">
+          <label htmlFor="specifications.finish">Finish</label>
+          <select
+            id="specifications.finish"
+            name="specifications.finish"
+            value={product.specifications.finish}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Finish</option>
+            {finishTypes.map((finish, idx) => (
+              <option key={idx} value={finish}>
+                {finish.charAt(0).toUpperCase() + finish.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
     </div>
-  );
+
+
+    <div className="form-section">
+      <h3>Colors</h3>
+      <div className="form-row">
+        <input
+          type="text"
+          placeholder="Color Name"
+          value={newColor.name}
+          onChange={(e) => setNewColor(prev => ({ ...prev, name: e.target.value }))}
+        />
+        <input
+          type="color"
+          value={newColor.hexCode}
+          onChange={(e) => setNewColor(prev => ({ ...prev, hexCode: e.target.value }))}
+        />
+        <button type="button" onClick={handleColorAdd}>Add Color</button>
+      </div>
+
+      <ul className="color-list">
+        {product.colors.map((color, index) => (
+          <li key={index} style={{ backgroundColor: color.hexCode }}>
+            {color.name} 
+            <button type="button" onClick={() => handleColorRemove(index)}>x</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div className="form-section">
+      <h3>Sizes</h3>
+      <div className="form-row">
+        <input
+          type="text"
+          placeholder="Size (e.g. S, M, L)"
+          value={newSize}
+          onChange={(e) => setNewSize(e.target.value)}
+        />
+        <button type="button" onClick={handleSizeAdd}>Add Size</button>
+      </div>
+      <ul className="size-list">
+        {product.sizes.map((size, index) => (
+          <li key={index}>
+            {size}
+            <button type="button" onClick={() => handleSizeRemove(index)}>x</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+
+    <div className="form-section">
+      <h3>Images (URLs)</h3>
+      <div className="form-row">
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={newImages}
+          onChange={(e) => setImages(e.target.value)}
+        />
+        <button type="button" onClick={handleImageAdd}>Add Image</button>
+      </div>
+      <ul className="image-list">
+        {product.images.map((url, index) => (
+          <li key={index}>
+            <a href={url} target="_blank" rel="noreferrer">Image {index + 1}</a>
+            <button type="button" onClick={() => handleImageRemove(index)}>x</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div className="form-section">
+      <h3>Features</h3>
+      <div className="form-row">
+        <input
+          type="text"
+          placeholder="Feature"
+          value={newFeature}
+          onChange={(e) => setNewFeature(e.target.value)}
+        />
+        <button type="button" onClick={handleFeatureAdd}>Add Feature</button>
+      </div>
+      <ul className="feature-list">
+        {product.features.map((feature, index) => (
+          <li key={index}>
+            {feature}
+            <button type="button" onClick={() => handleFeatureRemove(index)}>x</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+
+     <div className="form-section">
+      <h3>Description</h3>
+      <textarea
+        name="description"
+        value={product.description}
+        onChange={handleChange}
+        placeholder="Write product description..."
+        rows="4"
+        required
+      />
+    </div>
+
+    
+
+    <button type="submit" disabled={loading}>
+      {loading ? 'Adding Product...' : 'Add Product'}
+    </button>
+
+    {success && <p className="success-message">Product added successfully!</p>}
+  </form>
+</div>
+);
 };
 
 export default AddGoods;

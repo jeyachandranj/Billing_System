@@ -172,6 +172,19 @@ app.get("/api/orders/last", async (req, res) => {
   }
 });
 
+
+app.post('/api/shortage', async (req, res) => {
+  console.log('Shortage notification received:', req.body);
+
+  // Here you can save shortage info in a DB or send notification email
+
+  res.status(200).json({ message: 'Shortage notification received' });
+  await History.create({ 
+      type: "Order", 
+      detail: `${req.body.message}` 
+    });
+});
+
 // GET ORDER BY ID
 app.get("/api/orders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);

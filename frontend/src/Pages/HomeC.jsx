@@ -6,27 +6,21 @@ import AddOrder from './AddOrder';
 import HistoryPage from './HistoryPage';
 import BillingPage from './BillingPage';
 import DashboardPage from './DashboardPage';
-//import axios from 'axios';
 import './Home.css';
-import { MdAddShoppingCart, MdInventory2 } from 'react-icons/md';
-// Import icons for sidebar
-import { 
-  FaCartPlus ,
-  FaTachometerAlt, 
-  FaBoxOpen, 
-  FaFileInvoiceDollar, 
-  FaHistory, 
-  FaCog, 
-  FaSignOutAlt, 
+
+import {
+  FaCartPlus,
+  FaTachometerAlt,
+  FaBoxOpen,
+  FaFileInvoiceDollar,
+  FaHistory,
+  FaCog,
+  FaSignOutAlt,
   FaUserCircle,
   FaBars,
   FaTimes
 } from 'react-icons/fa';
-
-// Component Pages
-
-
-
+import { MdAddShoppingCart, MdInventory2 } from 'react-icons/md';
 
 const Settings = () => (
   <div className="content-container">
@@ -67,18 +61,17 @@ function HomeEmp() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   const handleLogout = () => {
-    // Handle logout logic here
     navigate('/');
   };
-  
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  
+
   const renderContent = () => {
-    switch(activeTab) {
+    switch (activeTab) {
       case 'dashboard':
         return <DashboardPage />;
       case 'addGoods':
@@ -94,90 +87,82 @@ function HomeEmp() {
       case 'settings':
         return <Settings />;
       default:
-        return <Dashboard />;
+        return <DashboardPage />;
     }
   };
-  
+
   return (
     <div className="home-container">
       <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <h2>Admin Portal</h2>
+            {isSidebarOpen ? (
+              <>
+                <div className="kcm-logo">Karuparayan Cotton Mills</div>
+                <div className="admin-title">Admin Portal</div>
+              </>
+            ) : (
+              <div className="kcm-logo">KCM</div>
+            )}
           </div>
           <button className="toggle-sidebar" onClick={toggleSidebar}>
             {isSidebarOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
-        
+
         <div className="user-info">
           <FaUserCircle className="user-avatar" />
-          <span className="user-name">{name}</span>
+          {isSidebarOpen && <span className="user-name">{name}</span>}
         </div>
-        
+
         <nav className="sidebar-nav">
           <ul>
-            <li 
-              className={activeTab === 'dashboard' ? 'active' : ''}
-              onClick={() => setActiveTab('dashboard')}
-            >
+            <li className={activeTab === 'dashboard' ? 'active' : ''} onClick={() => setActiveTab('dashboard')}>
               <FaTachometerAlt />
-              <span>Dashboard</span>
+              {isSidebarOpen && <span>Dashboard</span>}
             </li>
-            <li 
-              className={activeTab === 'addGoods' ? 'active' : ''} 
-              onClick={() => setActiveTab('addGoods')}>
+            <li className={activeTab === 'addGoods' ? 'active' : ''} onClick={() => setActiveTab('addGoods')}>
               <MdAddShoppingCart />
-              <span>Add Goods</span>
+              {isSidebarOpen && <span>Add Goods</span>}
             </li>
-            <li 
-              className={activeTab === 'manageGoods' ? 'active' : ''} 
-              onClick={() => setActiveTab('manageGoods')}>
+            <li className={activeTab === 'manageGoods' ? 'active' : ''} onClick={() => setActiveTab('manageGoods')}>
               <MdInventory2 />
-              <span>Manage Goods</span>
+              {isSidebarOpen && <span>Manage Goods</span>}
             </li>
-            <li 
-              className={activeTab === 'addOrder' ? 'active' : ''} 
-              onClick={() => setActiveTab('addOrder')}>
+            <li className={activeTab === 'addOrder' ? 'active' : ''} onClick={() => setActiveTab('addOrder')}>
               <FaCartPlus />
-              <span>Add Order</span>
+              {isSidebarOpen && <span>Add Order</span>}
             </li>
-
-            <li 
-              className={activeTab === 'billing' ? 'active' : ''}
-              onClick={() => setActiveTab('billing')}
-            >
+            <li className={activeTab === 'billing' ? 'active' : ''} onClick={() => setActiveTab('billing')}>
               <FaFileInvoiceDollar />
-              <span>Billing</span>
+              {isSidebarOpen && <span>Billing</span>}
             </li>
-            <li 
-              className={activeTab === 'history' ? 'active' : ''}
-              onClick={() => setActiveTab('history')}
-            >
+            <li className={activeTab === 'history' ? 'active' : ''} onClick={() => setActiveTab('history')}>
               <FaHistory />
-              <span>History</span>
+              {isSidebarOpen && <span>History</span>}
             </li>
-            <li 
-              className={activeTab === 'settings' ? 'active' : ''}
-              onClick={() => setActiveTab('settings')}
-            >
+            <li className={activeTab === 'settings' ? 'active' : ''} onClick={() => setActiveTab('settings')}>
               <FaCog />
-              <span>Settings</span>
+              {isSidebarOpen && <span>Settings</span>}
             </li>
             <li onClick={handleLogout}>
               <FaSignOutAlt />
-              <span>Logout</span>
+              {isSidebarOpen && <span>Logout</span>}
             </li>
           </ul>
         </nav>
       </div>
-      
+
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className="content-header">
           <h1>Welcome, {name}!</h1>
-          <p>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p>{new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}</p>
         </div>
-        
         <div className="content-body">
           {renderContent()}
         </div>
