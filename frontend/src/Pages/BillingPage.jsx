@@ -24,7 +24,7 @@ const BillingPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/orders');
+        const res = await axios.get('https://billing-system-f37s.onrender.com/api/orders');
         setOrders(res.data);
         setFilteredOrders(res.data);
       } catch (error) {
@@ -90,7 +90,7 @@ const BillingPage = () => {
 
   const handleSaveStatus = async (order) => {
     try {
-      await axios.put(`http://localhost:3000/api/orders/${order.orderId}`, {
+      await axios.put(`https://billing-system-f37s.onrender.com/api/orders/${order.orderId}`, {
         status: order.status,
       });
       alert('Status updated successfully');
@@ -102,7 +102,7 @@ const BillingPage = () => {
 
   const handleCreateInvoice = async (order) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/orders/${order._id}`);
+      const response = await axios.get(`https://billing-system-f37s.onrender.com/api/orders/${order._id}`);
       setSelectedOrder(response.data);
       setShowInvoice(true);
       document.body.style.overflow = 'hidden';

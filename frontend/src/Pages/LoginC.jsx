@@ -38,7 +38,7 @@ function LoginC() {
       setIsLoading(true);
 
       try {
-        const response = await axios.post("http://localhost:3000/", {
+        const response = await axios.post("https://billing-system-f37s.onrender.com/", {
           email,
           password,
         });
