@@ -21,7 +21,8 @@ app.use(bodyParser.json());
 const { userModel } = require("./models/goods.js");
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/billing_system")
+// mongoose.connect("mongodb://localhost:27017/billing_system")
+mongoose.connect("mongodb+srv://jeyachandranj:jj.jeyan@cluster0.pe8ib.mongodb.net/billing_system")
 .then(() => {
     console.log('✅ Connected to MongoDB Atlas');
 })
