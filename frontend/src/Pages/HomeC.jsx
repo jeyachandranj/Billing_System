@@ -70,6 +70,11 @@ function HomeEmp() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Function to check if content header should be displayed
+  const shouldShowContentHeader = () => {
+    return activeTab !== 'billing' && activeTab !== 'addOrder';
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -154,15 +159,17 @@ function HomeEmp() {
       </div>
 
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        <div className="content-header">
-          <h1>Welcome, {name}!</h1>
-          <p>{new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}</p>
-        </div>
+        {shouldShowContentHeader() && (
+          <div className="content-header">
+            <h1>Welcome, {name}!</h1>
+            <p>{new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</p>
+          </div>
+        )}
         <div className="content-body">
           {renderContent()}
         </div>

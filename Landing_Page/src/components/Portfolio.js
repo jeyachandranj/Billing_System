@@ -18,12 +18,7 @@ const CottonProducts = () => {
                                     Our premium Cotton Dropping Waste is carefully collected and processed to provide high-quality material for various industrial applications. This by-product of cotton processing is eco-friendly and cost-effective, making it an excellent choice for sustainable manufacturing practices. 
                                     Ideal for padding, insulation, and textile recycling industries.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -34,12 +29,7 @@ const CottonProducts = () => {
                                     Our Cotton Yarn Waste is sourced from spinning mills and textile factories, providing a versatile and affordable material for numerous applications. This product is perfect for creating affordable yarn blends, manufacturing paper products, and developing innovative eco-friendly materials.
                                     We ensure consistent quality with proper sorting and processing methods.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -50,12 +40,7 @@ const CottonProducts = () => {
                                     Our certified Organic Cotton is grown without harmful pesticides or synthetic fertilizers, making it environmentally friendly and safer for farmers and end users. This premium cotton variety features exceptional softness, breathability, and durability, perfect for high-quality textiles and sustainable fashion.
                                     Available in various grades to meet different manufacturing requirements.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -66,12 +51,7 @@ const CottonProducts = () => {
                                     Our Raw Cotton is harvested from selected farms to ensure the highest quality fibers. With consistent staple length and strength, our raw cotton meets the standards of textile manufacturers worldwide. We offer various grades suitable for different applications, from premium clothing to industrial uses.
                                     Available in bulk quantities with competitive pricing.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -82,12 +62,7 @@ const CottonProducts = () => {
                                     Our standard Cotton product offers excellent quality and versatility for a wide range of textile applications. Processed to meet industry standards, this cotton provides the perfect balance of quality and affordability. Suitable for everyday clothing, home textiles, and various industrial uses.
                                     We ensure consistent supply with flexible delivery options.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -98,12 +73,7 @@ const CottonProducts = () => {
                                     Our Cotton Waste product consists of various cotton by-products collected during different stages of processing. This versatile material can be repurposed for numerous applications including cleaning materials, low-cost yarn production, padding, and more. 
                                     An environmentally responsible choice that helps reduce textile waste while providing cost-effective raw material.
                                 </p>
-                                <div className="flex justify-center my-4">
-                                    <a href="/get-price" className="text-white bg-blue-900 hover:bg-blue-800 inline-flex items-center justify-center w-full px-6 py-3 my-4 text-lg shadow-xl rounded-xl">
-                                        Schedule Demo
-                                        <svg className="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                                    </a>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>

@@ -3,20 +3,30 @@ import axios from 'axios';
 import './BillingPage.css';
 import html2pdf from 'html2pdf.js';
 
-
 const BillingPage = () => {
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const invoiceRef = useRef();
+  
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const res = await axios.get('http://localhost:3000/api/orders');
         setOrders(res.data);
+        setFilteredOrders(res.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
       } finally {
@@ -25,20 +35,50 @@ const BillingPage = () => {
     };
     fetchOrders();
   }, []);
+  
+  // Apply filters
+  useEffect(() => {
+    let result = [...orders];
+    
+    // Status filter
+    if (statusFilter !== 'all') {
+      result = result.filter(order => order.status.toLowerCase() === statusFilter.toLowerCase());
+    }
+    
+    // Date filter
+    if (dateFilter) {
+      const filterDate = new Date(dateFilter);
+      result = result.filter(order => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate.toDateString() === filterDate.toDateString();
+      });
+    }
+    
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(order => 
+        (order.orderId && order.orderId.toLowerCase().includes(query)) ||
+        (order.customerName && order.customerName.toLowerCase().includes(query))
+      );
+    }
+    
+    setFilteredOrders(result);
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [statusFilter, dateFilter, searchQuery, orders]);
 
   const handleDownloadPDF = () => {
     const element = invoiceRef.current;
   
     const opt = {
-      margin:       0.3,
-      filename:     `${selectedOrder.orderId || 'invoice'}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, scrollY: 0 },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:    { avoid: 'tr' } // Optional: prevent breaking table rows
+      margin: 0.5,
+      filename: `${selectedOrder.orderId || 'invoice'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { avoid: 'tr' }
     };
     
-  
     html2pdf().set(opt).from(element).save();
   };
   
@@ -64,9 +104,8 @@ const BillingPage = () => {
     try {
       const response = await axios.get(`http://localhost:3000/api/orders/${order._id}`);
       setSelectedOrder(response.data);
-      console.log(response.data);
       setShowInvoice(true);
-      document.body.style.overflow = 'hidden';  // Disable scroll when modal is open
+      document.body.style.overflow = 'hidden';
     } catch (error) {
       console.error('Error fetching order details:', error);
       alert('Failed to load order details for invoice');
@@ -76,80 +115,167 @@ const BillingPage = () => {
   const handleCloseInvoice = () => {
     setSelectedOrder(null);
     setShowInvoice(false);
-    document.body.style.overflow = 'auto';  // Re-enable scroll when modal is closed
+    document.body.style.overflow = 'auto';
   };
+  
+  const resetFilters = () => {
+    setStatusFilter('all');
+    setDateFilter('');
+    setSearchQuery('');
+  };
+  
+  // Get current orders for pagination
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  
+  // Calculate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   if (isLoading) {
-    return <div className="loading">Loading orders...</div>;
+    return <div className="loading">Loading orders</div>;
   }
 
   return (
     <div className="billing-container">
-      <h2>Billing Page - Karuparayan Cotton Mill</h2>
       
-      <table className="orders-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Total (₹)</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.length > 0 ? (
-            orders.map(order => (
-              <tr key={order._id}>
-                <td>{order.orderId || order._id.substring(0, 8)}</td>
-                <td>{order.customerName}</td>
-                <td>{Number(order.totalAmount || 0).toFixed(2)}</td>
-
-                <td>
-                  {editMode ? (
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                  ) : (
-                    <span className={`status-badge ${order.status.toLowerCase()}`}>
-                      {order.status}
-                    </span>
-                  )}
-                </td>
-                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td>
-                  {editMode ? (
-                    <button 
-                      className="save-btn"
-                      onClick={() => handleSaveStatus(order)}
-                    >
-                      Save
-                    </button>
-                  ) : (
-                    <button 
-                      className="invoice-btn"
-                      onClick={() => handleCreateInvoice(order)}
-                    >
-                      Create Invoice
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
+      {/* Filter Controls */}
+      <div className="filter-controls">
+        <div className="filter-group">
+          <label>Status:</label>
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        
+        <div className="filter-group">
+          <label>Date:</label>
+          <input 
+            type="date" 
+            value={dateFilter} 
+            onChange={(e) => setDateFilter(e.target.value)}
+          />
+        </div>
+        
+        <div className="filter-group">
+          <label>Search:</label>
+          <input 
+            type="text" 
+            placeholder="Order ID or Customer" 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        <div className="filter-group">
+          <button onClick={resetFilters}>Reset Filters</button>
+        </div>
+      </div>
+      
+      <div className="orders-table-container">
+        <table className="orders-table">
+          <thead>
             <tr>
-              <td colSpan="6" className="no-orders">No orders found</td>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total (₹)</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {currentOrders.length > 0 ? (
+              currentOrders.map(order => (
+                <tr key={order._id}>
+                  <td>{order.orderId || order._id.substring(0, 8)}</td>
+                  <td>{order.customerName}</td>
+                  <td>{Number(order.totalAmount || 0).toFixed(2)}</td>
+                  <td>
+                    {editMode ? (
+                      <select
+                        className="status-select"
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Rejected">Rejected</option>
+                      </select>
+                    ) : (
+                      <span className={`status-badge ${order.status.toLowerCase()}`}>
+                        {order.status}
+                      </span>
+                    )}
+                  </td>
+                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    {editMode ? (
+                      <button 
+                        className="action-btn save-btn"
+                        onClick={() => handleSaveStatus(order)}
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button 
+                        className="action-btn invoice-btn"
+                        onClick={() => handleCreateInvoice(order)}
+                      >
+                        Create Invoice
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="no-orders">No orders found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Pagination */}
+      {filteredOrders.length > ordersPerPage && (
+        <div className="pagination">
+          <button 
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            &laquo;
+          </button>
+          
+          {pageNumbers.map(number => (
+            <button
+              key={number}
+              className={currentPage === number ? 'active' : ''}
+              onClick={() => setCurrentPage(number)}
+            >
+              {number}
+            </button>
+          ))}
+          
+          <button 
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageNumbers.length))}
+            disabled={currentPage === pageNumbers.length}
+          >
+            &raquo;
+          </button>
+        </div>
+      )}
 
       <div className="action-bar">
         <button 
@@ -179,13 +305,17 @@ const BillingPage = () => {
                   <p><strong>Date:</strong> {new Date(selectedOrder.createdAt).toLocaleDateString()}</p>
                   <p><strong>Invoice #:</strong> {selectedOrder.orderId || selectedOrder._id}</p>
                   <p><strong>Customer ID:</strong> {selectedOrder.customerId || 'N/A'}</p>
-                  <p><strong>Valid Until:</strong> {/* insert logic here */}</p>
+                  <p><strong>Valid Until:</strong> {new Date(
+                    new Date(selectedOrder.createdAt).setMonth(
+                      new Date(selectedOrder.createdAt).getMonth() + 1
+                    )
+                  ).toLocaleDateString()}</p>
                 </div>
               </div>
 
               <div className="company-info">
                 <h3>Karuparayan Cotton Mill</h3>
-                <p>8/134,Sillangadu, Nsdupatti,Uthukuli, Tamil Nadu</p>
+                <p>8/134, Sillangadu, Nsdupatti, Uthukuli, Tamil Nadu</p>
                 <p>Website: https://kc-mills.netlify.app/</p>
                 <p>Phone: 9786300829</p>
                 <p>Email: sddeepak512@gmail.com</p>
@@ -193,61 +323,60 @@ const BillingPage = () => {
               </div>
 
               <div className="customer-info">
-                <h4>Customer</h4>
-                <p>{selectedOrder.customerName}</p>
-                <p>{selectedOrder.customerAddress || '---'}</p>
-                <p>{selectedOrder.customerPhone || '---'}</p>
+                <h4>Customer Information</h4>
+                <p><strong>Name:</strong> {selectedOrder.customerName}</p>
+                <p><strong>Address:</strong> {selectedOrder.customerAddress || 'Not provided'}</p>
+                <p><strong>Phone:</strong> {selectedOrder.customerPhone || 'Not provided'}</p>
               </div>
 
               <table className="quote-table">
                 <thead>
                   <tr>
                     <th>Description</th>
-                    <th>Unit Price</th>
+                    <th>Unit Price (₹)</th>
                     <th>Qty</th>
                     <th>Tax</th>
-                    <th>Amount</th>
+                    <th>Amount (₹)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedOrder.items?.map((item, index) => (
                     <tr key={index}>
                       <td>{item.name}</td>
-                      <td>{item.price}</td>
+                      <td>{Number(item.price).toFixed(2)}</td>
                       <td>{item.count}</td>
                       <td>18%</td>
-                      <td>{(item.price * item.count)}</td>
+                      <td>{Number(item.price * item.count).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
               <div className="quote-summary">
-                <p><strong>Subtotal:</strong> ₹{selectedOrder.totalAmount}</p>
-                <p><strong>Taxable:</strong> ₹{(selectedOrder.items.reduce((a, b) => a + b.price * b.count, 0)*0.18).toFixed(2)}</p>
-                <p className="quote-total"><strong>Total:</strong> ₹{(Number(selectedOrder.totalAmount+selectedOrder.items.reduce((a, b) => a + b.price * b.count, 0)*0.18).toFixed(2))}</p>
+                <p><strong>Subtotal:</strong> ₹{Number(selectedOrder.totalAmount).toFixed(2)}</p>
+                <p><strong>GST (18%):</strong> ₹{Number(selectedOrder.items?.reduce((a, b) => a + b.price * b.count, 0) * 0.18).toFixed(2)}</p>
+                <p className="quote-total"><strong>Total Amount:</strong> ₹{Number(Number(selectedOrder.totalAmount) + selectedOrder.items?.reduce((a, b) => a + b.price * b.count, 0) * 0.18).toFixed(2)}</p>
               </div>
 
               <div className="terms">
                 <h4>Terms and Conditions</h4>
                 <ol>
-                  <li>Customer will be billed after indicating acceptance of this invoice.</li>
-                  <li>Payment will be due prior to delivery of service and goods.</li>
-                  <li>Please email or upload the signed invoice.</li>
+                  <li>Payment is due within 15 days from the date of invoice.</li>
+                  <li>Goods once sold will not be taken back or exchanged.</li>
+                  <li>All disputes are subject to Tamil Nadu jurisdiction only.</li>
                 </ol>
-                <p><strong>Customer Acceptance (sign below):</strong></p>
-                <div className="signature-line">x __________________________________________</div>
-                <p>Print Name: _______________________________</p>
+                
                 <p className="footer-note">
-                Thank You For Your Business!
-              </p>
+                  Thank You For Your Business!
+                </p>
               </div>
             </div>
-              <div className="action-bar">
-                <button className="save-btn" onClick={handleDownloadPDF}>
-                  Download PDF
-                </button>
-              </div>
+            
+            <div className="invoice-actions">
+              <button className="download-btn" onClick={handleDownloadPDF}>
+                Download PDF
+              </button>
+            </div>
           </div>
         </div>
       )}
