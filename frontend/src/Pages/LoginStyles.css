@@ -1,4 +1,5 @@
-/* LoginStyles.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
 :root {
   --primary: #424652;
   --primary-light: #6c707f;
@@ -21,14 +22,29 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ✨ Logo at the top center */
+.kcm-login-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  letter-spacing: 1.5px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 .login-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
   background: var(--gradient);
   position: relative;
   overflow: hidden;
+  padding-top: 20px;
 }
 
 /* Animated background elements */
@@ -271,12 +287,33 @@
     width: 90%;
     padding: 30px 20px;
   }
-  
+
   .login-header h2 {
     font-size: 24px;
   }
-  
+
   .form-input {
     padding: 12px;
   }
+
+  .kcm-login-logo {
+    font-size: 28px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+}
+
+
+.toggle-password-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
 }

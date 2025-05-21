@@ -50,6 +50,32 @@ body {
   z-index: 1000;
 }
 
+
+/* Unique logo for Karuparayan Cotton Mills */
+.kcm-logo {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  color: #d4bcbc; /* Deep blue */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 10px 0;
+  border-bottom: 2px solid #ffffff;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Admin Portal title styling */
+.admin-title {
+  font-size: 16px;
+  text-align: center;
+  color: #ffffff;
+  margin: 0;
+  font-weight: 500;
+}
+
+
+
 .sidebar.closed {
   width: 70px;
 }
@@ -562,4 +588,53 @@ table th {
   .dashboard-stats {
     grid-template-columns: 1fr;
   }
+}
+
+.toggle-sidebar {
+  background: transparent;
+  border: none;
+  color: white;       /* icon color white */
+  font-size: 1.8rem;  /* bigger size for visibility */
+  cursor: pointer;
+  outline: none;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.toggle-sidebar:hover {
+  color: #ddd;        /* lighter on hover */
+}
+
+/* When sidebar is open, toggle icon is white */
+.sidebar.open .toggle-sidebar {
+  color: white;
+}
+
+/* When sidebar is closed, toggle icon is black */
+.sidebar.closed .toggle-sidebar {
+  color: black;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content-header {
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  background-color: #f9f9f9;
+  flex-shrink: 0;
+}
+
+.content-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
 }
