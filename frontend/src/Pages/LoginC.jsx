@@ -8,7 +8,7 @@ import "./LoginStyles.css";
 function LoginC() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👈 New state
+  const [showPassword, setShowPassword] = useState(false); 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -94,7 +94,7 @@ function LoginC() {
             <label htmlFor="password">Password</label>
             <div className="input-container" style={{ position: "relative" }}>
               <input
-                type={showPassword ? "text" : "password"} // 👈 Toggle type
+                type={showPassword ? "text" : "password"} 
                 placeholder="Enter your password"
                 id="password"
                 name="password"

@@ -618,7 +618,23 @@ table th {
   color: black;
 }
 
-/* Hover effect */
-.toggle-sidebar:hover {
-  color: #555; /* dark gray on hover */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content-header {
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  background-color: #f9f9f9;
+  flex-shrink: 0;
+}
+
+.content-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
 }

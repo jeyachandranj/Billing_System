@@ -169,6 +169,23 @@ const ManageGoods = () => {
                   <span className="detail-label">Sizes:</span>
                   <span className="detail-value">{selectedProduct.sizes}</span>
                 </div>
+                {selectedProduct.colors?.length > 0 && (
+                <div className="detail-row">
+                  <span className="detail-label">Available Colors:</span>
+                  <div className="color-display-container">
+                    {selectedProduct.colors.map((color, idx) => (
+                      <div key={idx} className="color-item">
+                        <div
+                          className="color-box"
+                          style={{ backgroundColor: color.hexCode }}
+                        ></div>
+                        <span>{color.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
                 <h4 className="specifications-title">Specifications</h4>
                 <div className="detail-row">
                   <span className="detail-label">Material:</span>

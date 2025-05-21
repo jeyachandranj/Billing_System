@@ -5,7 +5,7 @@ import axios from 'axios';
 const AddGoods = () => {
   const materials = ['cotton', 'polyester', 'silk', 'linen'];
   const thicknesses = ['thin', 'medium', 'thick'];
-  const tensileStrengths = ['low', 'medium', 'high'];
+  const tensileStrengths = ['Ne 40s', 'Ne 60s', 'Ne 90s'];
   const finishTypes = ['matte', 'glossy', 'satin'];
   const threadCategories = [
     'Sewing ',
@@ -18,6 +18,19 @@ const AddGoods = () => {
     'Metallic ',
     'Elastic '
   ];
+  const predefinedColors = [
+  { name: 'Red', hexCode: '#FF0000' },
+  { name: 'Green', hexCode: '#00FF00' },
+  { name: 'Blue', hexCode: '#0000FF' },
+  { name: 'Yellow', hexCode: '#FFFF00' },
+  { name: 'Black', hexCode: '#000000' },
+  { name: 'White', hexCode: '#FFFFFF' },
+  { name: 'Pink', hexCode: '#FFC0CB' },
+  { name: 'Orange', hexCode: '#FFA500' },
+  { name: 'Purple', hexCode: '#800080' },
+  { name: 'Brown', hexCode: '#A52A2A' }
+];
+
 
   const [product, setProduct] = useState({
     name: '',
@@ -363,32 +376,47 @@ const AddGoods = () => {
     </div>
 
 
-    <div className="form-section">
-      <h3>Colors</h3>
-      <div className="form-row">
-        <input
-          type="text"
-          placeholder="Color Name"
-          value={newColor.name}
-          onChange={(e) => setNewColor(prev => ({ ...prev, name: e.target.value }))}
-        />
-        <input
-          type="color"
-          value={newColor.hexCode}
-          onChange={(e) => setNewColor(prev => ({ ...prev, hexCode: e.target.value }))}
-        />
-        <button type="button" onClick={handleColorAdd}>Add Color</button>
-      </div>
+<div className="form-section">
+  <h3>Colors</h3>
+  <div className="form-row">
+    <select
+      value={newColor.name}
+      onChange={(e) => {
+        const selected = predefinedColors.find(c => c.name === e.target.value);
+        if (selected) setNewColor(selected);
+      }}
+    >
+      <option value="">Select Color</option>
+      {predefinedColors.map((color, index) => (
+        <option key={index} value={color.name}>
+          {color.name}
+        </option>
+      ))}
+    </select>
+    <button type="button" onClick={handleColorAdd}>Add Color</button>
+  </div>
 
-      <ul className="color-list">
-        {product.colors.map((color, index) => (
-          <li key={index} style={{ backgroundColor: color.hexCode }}>
-            {color.name} 
-            <button type="button" onClick={() => handleColorRemove(index)}>x</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+  <ul className="color-list">
+    {product.colors.map((color, index) => (
+      <li key={index}>
+        <span
+          style={{
+            backgroundColor: color.hexCode,
+            display: 'inline-block',
+            width: '20px',
+            height: '20px',
+            borderRadius: '4px',
+            marginRight: '8px',
+            verticalAlign: 'middle'
+          }}
+        ></span>
+        {color.name}
+        <button type="button" onClick={() => handleColorRemove(index)}>x</button>
+      </li>
+    ))}
+  </ul>
+</div>
+
 
     <div className="form-section">
       <h3>Sizes</h3>

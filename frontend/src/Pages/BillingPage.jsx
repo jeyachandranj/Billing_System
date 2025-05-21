@@ -185,10 +185,11 @@ const BillingPage = () => {
 
               <div className="company-info">
                 <h3>Karuparayan Cotton Mill</h3>
-                <p>123 Mill Street, Coimbatore, Tamil Nadu</p>
-                <p>Website: www.kcmill.com</p>
-                <p>Phone: 000-000-0000</p>
-                <p>Email: support@kcmill.com</p>
+                <p>8/134,Sillangadu, Nsdupatti,Uthukuli, Tamil Nadu</p>
+                <p>Website: https://kc-mills.netlify.app/</p>
+                <p>Phone: 9786300829</p>
+                <p>Email: sddeepak512@gmail.com</p>
+                <p>GSTIN/UIN: 33CLMPD7076A1ZC</p>
               </div>
 
               <div className="customer-info">
