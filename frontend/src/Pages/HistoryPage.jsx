@@ -11,7 +11,7 @@ const HistoryPage = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get('https://billing-system-f37s.onrender.com/api/history');
+        const response = await axios.get('http://localhost:3000/api/history');
         setHistoryItems(response.data);
         setLoading(false);
       } catch (error) {

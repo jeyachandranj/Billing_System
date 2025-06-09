@@ -15,9 +15,9 @@ const AddOrder = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await axios.get('https://billing-system-f37s.onrender.com/api/goods');
+        const productsResponse = await axios.get('http://localhost:3000/api/goods');
         setProducts(productsResponse.data);
-        const ordersResponse = await axios.get('https://billing-system-f37s.onrender.com/api/orders/last');
+        const ordersResponse = await axios.get('http://localhost:3000/api/orders/last');
         if (ordersResponse.data && ordersResponse.data.orderId) {
           const lastId = parseInt(ordersResponse.data.orderId.split('-')[1]) || 0;
           setLastOrderId(lastId);
@@ -50,7 +50,7 @@ const AddOrder = () => {
           timestamp: new Date(),
         };
         try {
-          await axios.post('https://billing-system-f37s.onrender.com/api/shortage', shortageMessage);
+          await axios.post('http://localhost:3000/api/shortage', shortageMessage);
           console.log('Shortage message sent to backend');
         } catch (error) {
           console.error('Failed to send shortage message:', error);
@@ -90,7 +90,7 @@ const AddOrder = () => {
       // Note: phoneNumber is NOT included here, so it won't be sent to the backend
     };
     try {
-      const response = await axios.post('https://billing-system-f37s.onrender.com/api/orders', order);
+      const response = await axios.post('http://localhost:3000/api/orders', order);
       console.log('Order created:', response.data);
       alert(`Order created successfully! Order ID: ${orderId}`);
       setLastOrderId(prev => prev + 1);

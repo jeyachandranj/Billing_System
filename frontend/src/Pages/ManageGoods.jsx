@@ -13,7 +13,7 @@ const ManageGoods = () => {
 
   const fetchGoods = async () => {
     try {
-      const res = await axios.get('https://billing-system-f37s.onrender.com/api/goods');
+      const res = await axios.get('http://localhost:3000/api/goods');
       setProducts(res.data);
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -65,7 +65,7 @@ const ManageGoods = () => {
       return;
     }
 
-    await axios.put(`https://billing-system-f37s.onrender.com/api/goods/${id}`, product);
+    await axios.put(`http://localhost:3000/api/goods/${id}`, product);
     alert('Product updated');
     // Update the original product to match the new state
     setOriginalProduct({ ...product });

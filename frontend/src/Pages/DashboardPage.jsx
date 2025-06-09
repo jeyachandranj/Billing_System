@@ -27,9 +27,9 @@ const DashboardPage = () => {
   const fetchDashboardData = async () => {
     try {
       const [productsRes, ordersRes, historyRes] = await Promise.all([
-        axios.get('https://billing-system-f37s.onrender.com/api/goods'),
-        axios.get('https://billing-system-f37s.onrender.com/api/orders'),
-        axios.get('https://billing-system-f37s.onrender.com/api/history'),
+        axios.get('http://localhost:3000/api/goods'),
+        axios.get('http://localhost:3000/api/orders'),
+        axios.get('http://localhost:3000/api/history'),
       ]);
 
       const products = productsRes.data;
